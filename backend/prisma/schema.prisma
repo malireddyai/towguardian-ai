@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model TowJob {
+  id          String   @id @default(uuid())
+  towNumber   String   @unique
+  vehicle     String
+  driver      String
+  status      String
+  location    String
+  createdAt   DateTime @default(now())
+
+  violations  Violation[]
+}
+
+model Driver {
+  id              String   @id @default(uuid())
+  name            String
+  cdlExpiry       DateTime
+  medicalExpiry   DateTime
+  status          String
+  createdAt       DateTime @default(now())
+}
+
+model Violation {
+  id          String   @id @default(uuid())
+  severity    String
+  description String
+  status      String
+  createdAt   DateTime @default(now())
+
+  towJobId    String
+  towJob      TowJob @relation(fields: [towJobId], references: [id])
+}
